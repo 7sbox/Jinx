@@ -6,13 +6,21 @@
 //  Copyright (c) 2015年 TanHao. All rights reserved.
 //
 
+#include <errno.h>
+#include <memory>
+#include <stdio.h>
+
+#ifdef _WIN32
+#include <WinSock.h>
+#endif
+#ifdef OS_Linux
+#endif
+#ifdef OS_Darwin
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <errno.h>
-#include <memory>
 #include <unistd.h>
-#include <stdio.h>
+#endif
 
 #define PORT 5001
 
@@ -32,12 +40,14 @@ int main(int argc, const char * argv[])
     
     //socket需要与ip及端口绑定
     int optval = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(optval));
     
+#ifdef SO_NOSIGPIPE
     //忽略链接断开后的SIGPEPE信号,否则send会引起Crash
     optval = 1;
-    setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval));
-    
+    setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, (const char*)&optval, sizeof(optval));
+#endif
+
     if (connect(sock, (struct sockaddr*) &addr, sizeof(addr)) == -1)
     {
         printf("connect() failed:%d\n",errno);
@@ -47,10 +57,10 @@ int main(int argc, const char * argv[])
     char i = 'a';
     while (true)
     {
-        sleep(2);
+        Sleep(2);
         
         char buffer[1] = {i};
-        ssize_t sendret = send(sock, buffer, sizeof(buffer), 0);
+        int sendret = send(sock, buffer, sizeof(buffer), 0);
         if (sendret == -1)
         {
             printf("socket broken!\n");

@@ -1,53 +1,34 @@
 
-CC=gcc -D __OS_$(shell uname)__
+CC=gcc -D _OS_$(OS)_
+SDIR = source
+ODIR = build
+INC = -Iinc
 
 all: clean comp
 
 clean:
-	@rm -f server client *.o
+	rm -f $(ODIR)/*.*
 
-comp: OS_Info OS_$(shell uname)
-
-OS_Info:
-	@echo $(shell uname)...
-
+comp: PRE_$(OS) OS_$(OS)
 #------------------------------------
-OS_Darwin: server.o client.o
-	@$(CC) -o server server.o
-	@$(CC) -o client client.o
-	@rm -f *.o
+_EXOBJS = libws2_32.a
+EXOBJS = $(patsubst %,$(LIBDIR)/%,$(_EXOBJS))
 
-OS_Linux: server.o client.o
-	@$(CC) -o server server.o
-	@$(CC) -o client client.o
-	@rm -f *.o
+_OBJS = client.o
+OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
+
+$(ODIR)/%.o: $(SDIR)/%.cpp 
+	$(CC) -c $(INC) -o $@ $< $(CFLAGS) 
 #------------------------------------
-
-server.o: server.cpp
-	@$(CC) -c server.cpp -o server.o
-
-client.o: client.cpp
-	@$(CC) -c client.cpp -o client.o
-
-
-# OUT = lib/alib.a
-# CC = g++
-# ODIR = obj
-# SDIR = src
-# INC = -Iinc
-
-# _OBJS = a_chsrc.o a_csv.o a_enc.o a_env.o a_except.o \
-#         a_date.o a_range.o a_opsys.o
-# OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
-
-
-# $(ODIR)/%.o: $(SDIR)/%.cpp 
-#     $(CC) -c $(INC) -o $@ $< $(CFLAGS) 
-
-# $(OUT): $(OBJS) 
-#     ar rvs $(OUT) $^
-
-# .PHONY: clean
-
-# clean:
-#     rm -f $(ODIR)/*.o $(OUT)
+PRE_Darwin:
+PRE_Linux:
+PRE_Windows_NT:
+LIBDIR = C:/MinGW/lib
+#------------------------------------
+OS_Darwin: $(OBJS)
+	$(CC) -o $(ODIR)/client $(OBJS)
+OS_Linux: $(OBJS)
+	$(CC) -o $(ODIR)/client $(OBJS)
+OS_Windows_NT: $(OBJS)
+	$(CC) -o $(ODIR)/client.exe $(OBJS) $(EXOBJS)
+#------------------------------------
