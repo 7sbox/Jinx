@@ -1,4 +1,4 @@
-CC=gcc -D _OS_Windows_
+CC=gcc -m64 -D _OS_Windows_
 SDIR = source
 ODIR = build
 LIBDIR = .
@@ -11,14 +11,12 @@ _OBJS = main.obj
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 $(ODIR)/%.obj: $(SDIR)/%.c 
-	$(CC) -c $(INC) -o $@ $< $(CFLAGS) 
+	@$(CC) -c $(INC) -o $@ $< $(CFLAGS) 
 	
 #------------------------------------
 build : $(OBJS)
 	@$(CC) -o $(BFile) $(OBJS) $(EXOBJS)
 	@$(BFile)
 
-clean :
-	@rm -f $(OBJS) $(BDIR)/*
-
-all : clean build
+clean: $(OBJS)
+	@rm -f $(BFile) $(OBJS)
