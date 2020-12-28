@@ -1,7 +1,6 @@
 .DS_Store
-.o
-.so
-.a
-.lib
-.exe
+*.lib
+*.exe
+*.obj
 /build
+/bin

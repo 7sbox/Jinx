@@ -16,7 +16,9 @@ $(ODIR)/%.obj: $(SDIR)/%.c
 #------------------------------------
 build : $(OBJS)
 	@$(CC) -o $(BFile) $(OBJS) $(EXOBJS)
+
+test :
 	@$(BFile)
 
-clean: $(OBJS)
+clean : $(OBJS)
 	@rm -f $(BFile) $(OBJS)
