@@ -14,11 +14,11 @@ $(ODIR)/%.obj: $(SDIR)/%.c
 	@$(CC) -c $(INC) -o $@ $< $(CFLAGS) 
 	
 #------------------------------------
-build : $(OBJS)
+build : clean $(OBJS)
 	@$(CC) -o $(BFile) $(OBJS) $(EXOBJS)
 
 test :
 	@$(BFile)
 
-clean : $(OBJS)
-	@rm -f $(BFile) $(OBJS)
+clean : 
+	@rm -f $(BFile) $(ODIR)/*
